@@ -1,6 +1,26 @@
 # redis-cluster 
 **Redis cluster with Docker Compose** 
 
+This has been forked from [https://github.com/AliyunContainerService/redis-cluster][1]
+
+The purpose of the fork is to add bridged network support so that in a development environment you can connect to the cluster from other boxes.
+
+It also introduces a placeholder for the hostname to allow you specify this either manually or using sed in a CI environment.
+
+**Do not use this in production, unless you really hate your data.**
+
+An example sed command is below:
+
+```
+sed -e "s/HOST/YOURHOSTNAME/g" sentinel/sentinel-template.conf > sentinel/sentinel.conf && sed -e "s/HOST/YOURHOSTNAME/g" docker-compose.yml | docker-compose --file - up -d
+```
+
+If you wish to deploy manually then open docker-compose.yml and edit the HOST placeholder with the hostname/ip of the box you are running the cluster on.
+
+Open sentinel/sentinel-template.conf and also edit the HOST placeholder with the hostname/ip of the box. Then rename the file to sentinel.conf.
+
+# Original Readme from [https://github.com/AliyunContainerService/redis-cluster][1]
+
 Using Docker Compose to setup a redis cluster with sentinel.
 
 This project is inspired by the project of [https://github.com/mdevilliers/docker-rediscluster][1]

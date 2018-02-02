@@ -1,15 +1,27 @@
-master:
-  image: redis:3
-slave:
-  image: redis:3
-  command: redis-server --slaveof redis-master 6379
-  links:
-    - master:redis-master
-sentinel:
-  build: sentinel
-  environment:
-    - SENTINEL_DOWN_AFTER=5000
-    - SENTINEL_FAILOVER=5000    
-  links:
-    - master:redis-master
-    - slave
+version: "2.1"
+services:
+  master:
+    restart: unless-stopped
+    image: redis:3
+    ports:
+      - 6380:6379
+    network_mode: bridge
+  slave:
+    restart: unless-stopped
+    image: redis:3
+    command: redis-server --slaveof HOST 6380
+    ports:-template
+      - 6381:6379
+    network_mode: bridge
+  sentinel:
+    network_mode: bridge
+    restart: unless-stopped
+    build: sentinel
+    environment:
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=5000    
+    depends_on:
+      - master
+      - slave
+    ports: 
+      - 26379:26379
